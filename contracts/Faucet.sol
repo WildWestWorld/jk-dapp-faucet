@@ -4,6 +4,8 @@ pragma solidity >=0.4.22 <0.9.0;
 contract Faucet {
     uint public numOfFunders;
 
+    address public owner;
+
     mapping(address => bool) public funders;
 
     //     mapping(uint => address)：
@@ -13,7 +15,30 @@ contract Faucet {
     // 总体来说，这个映射表示从无符号整数键到以太坊地址值的映射关系。
     mapping(uint => address) public lutFunders;
 
+    constructor() {
+        owner = msg.sender;
+    }
+
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Only owner");
+        _;
+    }
+
+    // 在智能合约中，modifier 是一个用于修改其他函数行为的代码块。它可以在函数执行前或执行后执行特定的逻辑，从而对函数进行限制或扩展。
+
+    modifier limitWithdraw(uint widthdrawAmount) {
+        require(
+            widthdrawAmount <= 1000000000000000000,
+            "Cannot withdraw more than 0.1 ether"
+        );
+        // 这个特殊的符号表示修饰器的占位符。它指示了函数体应该在此处执行。
+        _;
+    }
+
     receive() external payable {}
+
+
+
     function addFunds() external payable {
         address funder = msg.sender;
         if (!funders[funder]) {
@@ -23,10 +48,16 @@ contract Faucet {
         }
     }
 
-    function withdraw(uint widthdrawAmount) external {
-        if (widthdrawAmount < 100000000000000) {
-            payable(msg.sender).transfer(widthdrawAmount);
-        }
+    function test1() external onlyOwner {}
+
+    function test2() external onlyOwner {}
+
+    function withdraw(
+        uint widthdrawAmount
+    ) external limitWithdraw(widthdrawAmount) {
+        // payable：将地址 msg.sender 转换为一个可以接收以太币的 payable 地址。不是所有地址在智能合约中都可以接收以太币，必须显式声明为 payable。
+
+        payable(msg.sender).transfer(widthdrawAmount);
     }
 
     function getAllFunders() public view returns (address[] memory) {
@@ -42,3 +73,13 @@ contract Faucet {
         return _funders[index];
     }
 }
+
+//const instance = await Faucet.deployed();
+
+//instance.addFunds({from: accounts[0],value: "2000000000000000000"})
+//instance.addFunds({from: accounts[1],value: "2000000000000000000"})
+
+// instance.withdraw("5000000000000000000",{from:accounts[1]})
+
+// instance.getFunderAtIndex(0)
+// instance.getAllFunders()
