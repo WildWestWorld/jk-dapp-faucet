@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import "./App.css"
 import Web3 from "web3";
 import detectEthereumProvider from "@metamask/detect-provider";
+import Contract from '@truffle/contract';
+
 
 function App() {
 
@@ -13,6 +15,7 @@ function App() {
   const [account, setAccount] = useState(null)
 
   useEffect(() => {
+    console.log(Contract)
     const loadProvider = async () => {
 
 
