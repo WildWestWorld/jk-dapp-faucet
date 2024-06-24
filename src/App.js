@@ -56,10 +56,8 @@ function App() {
 
       setBalance(web3.utils.fromWei(balance, "ether"))
     }
-    console.log('触发1')
     // console.warn(web3Api.contract)
     web3Api.contract && loadBalance()
-    console.log('触发')
   }, [web3Api, shouldReload])
 
 
